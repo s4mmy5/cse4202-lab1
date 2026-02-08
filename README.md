@@ -8,6 +8,7 @@ We started with an implementation of the simple module example from LKD shown on
 # Timer Design and Evaluation
 
 ## System Logs
+We created a ktime_t object using the module parameters, initialized the hrtimer structure, and assigned it a timer callback that restarted the timer on expiration. Lastly, we start the hrtimer structure which triggers on every interval until the module is unloaded and the timer is cancelled.
 
 Timer called every 1000000 nanoseconds:
 ```
@@ -50,4 +51,3 @@ Timer called every 2 seconds:
 [ 3072.564640] timer restarted.
 [ 3072.956216] simple module is being unloaded
 ```
-

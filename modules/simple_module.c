@@ -28,7 +28,6 @@ enum hrtimer_restart timer_callback(struct hrtimer *timer_ptr) {
 static int simple_init(void) {
   interval = ktime_set(log_sec, log_nsec);
   hrtimer_init(&timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-
   timer.function = &timer_callback;
   hrtimer_start(&timer, interval, HRTIMER_MODE_REL);
 
