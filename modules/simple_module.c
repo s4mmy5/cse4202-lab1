@@ -15,8 +15,8 @@ static unsigned long log_nsec = 0;
 module_param(log_sec, ulong, 0);
 module_param(log_nsec, ulong, 0);
 
-ktime_t interval;
-struct hrtimer timer;
+static ktime_t interval;
+static struct hrtimer timer;
 
 enum hrtimer_restart timer_callback(struct hrtimer *timer_ptr) {
   printk(KERN_ALERT "timer restarted.\n");
@@ -32,7 +32,7 @@ static int simple_init(void) {
   timer.function = &timer_callback;
   hrtimer_start(&timer, interval, HRTIMER_MODE_REL);
 
-  printk(KERN_ALERT "simple module initialized\n");
+  printk(KERN_ALERT "simple module initialized. log_sec=%lu, log_nsec=%lu\n", log_sec, log_nsec);
   return 0;
 }
 
