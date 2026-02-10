@@ -8,15 +8,25 @@
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/ktime.h>
+#include <linux/kthread.h>
 #include <linux/module.h>
 
+// parameters
 static unsigned long log_sec = 1;
 static unsigned long log_nsec = 0;
 module_param(log_sec, ulong, 0);
 module_param(log_nsec, ulong, 0);
 
+// timer values
 static ktime_t interval;
 static struct hrtimer timer;
+
+// thread values
+static struct task_struct *thread_task;
+
+int thread_runner(void *data) {
+  return 0;
+}
 
 enum hrtimer_restart timer_callback(struct hrtimer *timer_ptr) {
   printk(KERN_ALERT "timer restarted.\n");
@@ -26,6 +36,11 @@ enum hrtimer_restart timer_callback(struct hrtimer *timer_ptr) {
 
 /* init function - logs that initialization happened, returns success */
 static int simple_init(void) {
+  thread_task = NULL;
+  thread_task = kthread_run(thread_runner, NULL, "thread_runner()");
+  if (!thread_task)
+    return -EAGAIN;
+
   interval = ktime_set(log_sec, log_nsec);
   hrtimer_init(&timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
   timer.function = &timer_callback;
