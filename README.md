@@ -51,3 +51,7 @@ Timer called every 2 seconds:
 [ 3072.564640] timer restarted.
 [ 3072.956216] simple module is being unloaded
 ```
+
+## Thread Design and Evaluation
+
+TODO: Add section on how we dealt with possible race conditions.

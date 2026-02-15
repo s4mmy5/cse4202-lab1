@@ -8,6 +8,7 @@
 #include <linux/ktime.h>
 #include <linux/kthread.h>
 #include <linux/module.h>
+#include <linux/types.h>
 
 // parameters
 static unsigned long log_sec = 1;
@@ -23,10 +24,22 @@ static struct hrtimer timer;
 static struct task_struct *thread_task;
 
 int thread_runner(void *data) {
+  do {
+    printk(KERN_ALERT "Loop reached!\n"
+           "Number of Voluntary Context Switches: %ld\n"
+           "Number of InVoluntary Context Switches: %ld\n",
+           current->nvcsw,
+           current->nivcsw);
+    set_current_state(TASK_INTERRUPTIBLE);
+    schedule();
+  } while (!kthread_should_stop());
+
+  printk(KERN_ALERT "Loop terminated, exiting thread!\n");
   return 0;
 }
 
 enum hrtimer_restart timer_callback(struct hrtimer *timer_ptr) {
+  wake_up_process(thread_task);
   printk(KERN_ALERT "timer restarted.\n");
   hrtimer_forward_now(timer_ptr, interval);
   return HRTIMER_RESTART;
@@ -36,8 +49,10 @@ enum hrtimer_restart timer_callback(struct hrtimer *timer_ptr) {
 static int monitor_init(void) {
   thread_task = NULL;
   thread_task = kthread_run(thread_runner, NULL, "thread_runner()");
-  if (!thread_task)
+
+  if (!thread_task) {
     return -EAGAIN;
+  }
 
   interval = ktime_set(log_sec, log_nsec);
   hrtimer_init(&timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
@@ -51,6 +66,7 @@ static int monitor_init(void) {
 /* exit function - logs that the module is being removed */
 static void monitor_exit(void) {
   hrtimer_cancel(&timer);
+  kthread_stop(thread_task);
 
   printk(KERN_ALERT "monitor module is being unloaded\n");
 }
