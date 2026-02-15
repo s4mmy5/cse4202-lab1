@@ -1,1 +1,1 @@
-obj-m := simple_module.o
+obj-m := monitor_mod.o

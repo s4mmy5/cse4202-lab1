@@ -1,6 +1,4 @@
-/* simple_module.c - a simple template for a loadable kernel module in Linux,
-   based on the hello world kernel module example on pages 338-339 of Robert
-   Love's "Linux Kernel Development, Third Edition."
+/* TODO: Add description and authorship.
  */
 
 #include <linux/errno.h>
@@ -35,7 +33,7 @@ enum hrtimer_restart timer_callback(struct hrtimer *timer_ptr) {
 }
 
 /* init function - logs that initialization happened, returns success */
-static int simple_init(void) {
+static int monitor_init(void) {
   thread_task = NULL;
   thread_task = kthread_run(thread_runner, NULL, "thread_runner()");
   if (!thread_task)
@@ -46,19 +44,19 @@ static int simple_init(void) {
   timer.function = &timer_callback;
   hrtimer_start(&timer, interval, HRTIMER_MODE_REL);
 
-  printk(KERN_ALERT "simple module initialized. log_sec=%lu, log_nsec=%lu\n", log_sec, log_nsec);
+  printk(KERN_ALERT "monitor module initialized. log_sec=%lu, log_nsec=%lu\n", log_sec, log_nsec);
   return 0;
 }
 
 /* exit function - logs that the module is being removed */
-static void simple_exit(void) {
+static void monitor_exit(void) {
   hrtimer_cancel(&timer);
 
-  printk(KERN_ALERT "simple module is being unloaded\n");
+  printk(KERN_ALERT "monitor module is being unloaded\n");
 }
 
-module_init(simple_init);
-module_exit(simple_exit);
+module_init(monitor_init);
+module_exit(monitor_exit);
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("CSE 4202 Team");
