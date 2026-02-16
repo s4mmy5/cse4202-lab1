@@ -1,1 +1,1 @@
-obj-m := monitor_mod.o
+obj-m := mt_monitor_mod.o
