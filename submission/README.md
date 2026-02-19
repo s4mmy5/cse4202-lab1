@@ -243,7 +243,7 @@ Observations:
 
 
 # System Performance
-Based on the Kernelshark trace, it appears that the threads are sometimes preempted. The amount of time each CPU spends executing the threads varies between schedule switches. We believe the schedule() call inside each of the threads, when it executes, is what might be able to preempt the threads.
+Based on the Kernelshark trace, it appears that the threads are sometimes preempted. The amount of time each CPU spends executing the threads varies between schedule switches. We believe the schedule() call inside each of the threads, when it executes, is what might be able to preempt the threads. Another reason could be that our schedule() call only executes when the timer expires after a second in our code, but in some of our thread wakeups when the timers are short enough to where involutary context switches happen (like 100000 nsec or 0.1 ms), the amount of time that the threads are executing for vary. This could mean that sometimes the threads don't execute for the full time before calling schedule(), and this means that the kernel is also preempting threads outside of the schedule() call. This was proven in one of our traces where we saw a thread_runner() being preempted with an R in the trace, which essentially means the thread was running and then it was stopped to make room for another process, making it an example of preemption in the kernel.
 
 Delta measurements
 The three delta measurements we found were 0.000083 sec, 0.000095 sec, 0.000093 sec. See total_exec.png for a sample measurement.
