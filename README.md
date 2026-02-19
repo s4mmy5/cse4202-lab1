@@ -241,4 +241,19 @@ Observations:
 2. The number of involuntary context switches for longer timer interrupts noticeably went up. This is likely due to more contention for a single core, than before when our program was single-threaded and not tied to specific core.
 3. The number of involuntary context switches still seems to go up with shorter intervals, which makes sense as the bottom half processing happens more often and thus it must also be preempted more often.
 
-## 
+
+# System Performance
+Based on the Kernelshark trace, it appears that the threads are sometimes preempted. The amount of time each CPU spends executing the threads varies between schedule switches. We believe the schedule() call inside each of the threads, when it executes, is what might be able to preempt the threads.
+
+Delta measurements
+The three delta measurements we found were 0.000083 sec, 0.000095 sec, 0.000093 sec. See total_exec.png for a sample measurement.
+
+Jitter measurements
+The three jitter measurements we took were: 0.000040 sec, 0.000045 sec, 0.000045 sec. The minimum jitter was 0.000040 sec, the maximum jitter was 0.000045 sec, and the mean jitter was 0.0000433 sec.
+
+Thread running time measurements
+Our five measurements were: 0.000038 sec, 0.000046 sec, 0.000053 sec, 0.000038 sec, 0.000037 sec. The minimum time was 0.000037 sec, maximum time was 0.000053 sec, and the average was 0.0000424 sec.
+
+# Development Effort
+
+ 
